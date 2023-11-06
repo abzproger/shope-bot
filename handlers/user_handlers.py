@@ -32,4 +32,4 @@ async def help(message:Message):
 async def location (message:Message):
     await message.answer('Вот где находится наш магазин.👇🏻')
     await message.answer_location(latitude=42.73303393290414,longitude= 47.134653774337586)
-
+gnc 
