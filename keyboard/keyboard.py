@@ -1,6 +1,6 @@
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 from aiogram.types import KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
-from lexicon import LEXICON
+from lexicon.lexicon_RU import LEXICON
 
 def kb_generator(buttons: list):
     keyboard: list[KeyboardButton] = [
