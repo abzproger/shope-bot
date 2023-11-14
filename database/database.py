@@ -42,8 +42,9 @@ class DataBase:
     def close(self):  # Закрываем базу данных
         self.con.close()
 
+
 #
-#class User:
+# class User:
 #    date = datetime.now().date()
 #
 #    def __init__(self, db):
@@ -69,7 +70,7 @@ class DataBase:
 #        return rows
 #
 #
-#class Products:
+# class Products:
 #    def __init__(self, db):
 #        self.db = db
 #
@@ -101,7 +102,7 @@ class DataBase:
 #        return query
 #
 #
-#class Cart:
+# class Cart:
 #    def __init__(self, db):
 #        self.db = db
 #
@@ -126,34 +127,32 @@ class DataBase:
 
 
 db = DataBase('database.db')  # Подключаемся к базе данных
-db.create_table(table_name="Users",  # Создаем таблицы, если их не существует
-                columns=["id INTEGER PRIMARY KEY AUTOINCREMENT",
-                         "UserName TEXT NOT NULL",
-                         "TelegramID INTEGER NOT NULL",
-                         "Phone INTEGER ",
-                         "Email TEXT NOT NULL", "reg_date TEXT NOT NULL"])
+# db.create_table(table_name="Users",  # Создаем таблицы, если их не существует
+#               columns=["id INTEGER PRIMARY KEY AUTOINCREMENT",
+#                         "UserName TEXT NOT NULL",
+#                         "TelegramID INTEGER NOT NULL",
+#                         "Phone INTEGER ",
+#                         "Email TEXT NOT NULL", "reg_date TEXT NOT NULL"])
 
 
 db.create_table(table_name='Categories', columns=["CategoryID INTEGER PRIMARY KEY ,"
-                                                  "CategoryName"])
+                                                  "CategoryName TEXT NOT NULL"])
 
 db.create_table(table_name="Products",
-                columns=["id INTEGER PRIMARY KEY AUTOINCREMENT",
-                         "ProductName VARCHAR(100) NOT NULL",
+                columns=["ProductID INTEGER PRIMARY KEY AUTOINCREMENT",
+                         "ProductName TEXT NOT NULL",
                          "CategoryID INTEGER NOT NULL",
                          "Description TEXT",
                          "Price INTEGER NOT NULL",
                          "Quantity INTEGER NOT NULL",
                          "Image BLOB NOT NULL",
                          "FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)"])
-#
-#db.create_table(table_name="Cart",
-#                columns=["id INTEGER PRIMARY KEY AUTOINCREMENT",
-#                         "TelegramID INTEGER NOT NULL",
-#                         "ProductID INTEGER NOT NULL",
-#                         "ProductName VARCHAR(100) NOT NULL",
-#                         "Quantity INTEGER NOT NULL",
-#                         "CategoryID INTEGER ",
-#                         "FullPrice INTEGER NOT NULL"])
 
-
+db.create_table(table_name="Cart",
+                columns=["id INTEGER PRIMARY KEY AUTOINCREMENT",
+                         "TelegramID INTEGER NOT NULL",
+                         "ProductID INTEGER NOT NULL",
+                         "Quantity INTEGER NOT NULL",
+                         "CategoryID INTEGER NOT NULL ",
+                         "FullPrice INTEGER NOT NULL",
+                         "FOREIGN KEY (ProductID) REFERENCES Products(ProductID)"])

@@ -47,20 +47,24 @@ async def append_product(message: Message, state: FSMContext):
 
 @router.message(FSMProduct.name)
 async def fsm_name(message: Message, state: FSMContext):
-    for i in db.select_data(table_name='Categories'):
-        cats = {i[0]:i[1]}
-    await message.answer(text='2/6 Введите категорию продукта:',reply_markup=kb_generator())
+    global cats
+    categories_data = db.select_data('Categories')
+    cats = {category[1]: category[0] for category in categories_data}
+    await message.answer(text='2/6 Введите категорию продукта:', reply_markup=kb_generator(list(cats.keys())))
     await state.update_data(name=message.text.capitalize())
-
     await state.set_state(state=FSMProduct.category)
 
 
-@router.message(FSMProduct.category)
+@router.message(F.text,FSMProduct.category)
 async def fsm_category(message: Message, state: FSMContext):
-    await message.answer(text='3/6 Введите описание товара:')
-    await state.update_data(category=message.text)
+    if list(cats.keys()).count(f"{message.text}"):
+        await state.update_data(category=cats[f"{message.text}"])
+        await message.answer(text='3/6 Введите описание товара:', reply_markup=ReplyKeyboardRemove())
 
-    await state.set_state(state=FSMProduct.description)
+        await state.set_state(state=FSMProduct.description)
+    else:
+        await message.answer('Нажмите на кнопку!')
+
 
 
 @router.message(FSMProduct.description)
