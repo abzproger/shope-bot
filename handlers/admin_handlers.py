@@ -25,6 +25,10 @@ class FSMProduct(StatesGroup):
     photo = State()
 
 
+class FsmCategory(StatesGroup):
+    category = State()
+
+
 class IsAdmin(BaseFilter):
     def __init__(self, admin_ids: list[int]) -> None:
         self.admin_ids = admin_ids
@@ -39,12 +43,26 @@ async def admin(message: Message):
     await message.answer(text=LEXICON_ADMIN['admin'], reply_markup=kb_generator(ADMIN_PANEL))
 
 
-@router.message(F.text == ADMIN_PANEL[3], StateFilter(default_state))
+@router.message(F.text == ADMIN_PANEL[1], IsAdmin(admin_ids), StateFilter(default_state))
+async def category(message: Message, state: FSMContext):
+    await message.answer('Введите новую категорию')
+    await state.set_state(state=FsmCategory.category)
+
+
+@router.message(FsmCategory.category)
+async def add_category( message: Message,state: FSMContext):
+    await state.update_data(category=message.text.capitalize())
+    a = await state.get_data()
+    db.insert_data(table_name='Categories',data=(None,a['category']))
+    await message.answer(f'Категория "{message.text.capitalize()}" добавлена')
+    await state.clear()
+
+@router.message(F.text == ADMIN_PANEL[4], StateFilter(default_state))
 async def cancel(message: Message):  # Отмена в дефолтном состоянии
     await message.answer(text='Отмена', reply_markup=ReplyKeyboardRemove())
 
 
-@router.message(F.text == ADMIN_PANEL[3], ~StateFilter(default_state))
+@router.message(F.text == ADMIN_PANEL[4], ~StateFilter(default_state))
 async def process_cancel_command_state(message: Message, state: FSMContext):
     await message.answer(text=LEXICON_ADMIN['cancel_fsm'], reply_markup=ReplyKeyboardRemove())
     # Сбрасываем состояние и очищаем данные, полученные внутри состояний
@@ -53,7 +71,7 @@ async def process_cancel_command_state(message: Message, state: FSMContext):
 
 @router.message(F.text == ADMIN_PANEL[0], IsAdmin(admin_ids), StateFilter(default_state))
 async def append_product(message: Message, state: FSMContext):
-    await message.answer(text='1/6 Введите название продукта:', reply_markup=kb_generator([ADMIN_PANEL[3]]))
+    await message.answer(text='1/6 Введите название продукта:', reply_markup=kb_generator([ADMIN_PANEL[4]]))
     await state.set_state(state=FSMProduct.name)
 
 
@@ -62,39 +80,43 @@ async def fsm_name(message: Message, state: FSMContext):
     global cats
     categories_data = db.select_data('Categories')
     cats = {category[1]: category[0] for category in categories_data}
-    await message.answer(text='2/6 Введите категорию продукта:', reply_markup=kb_generator(list(cats.keys())))
-    await state.update_data(name=message.text.capitalize())
-    await state.set_state(state=FSMProduct.category)
+    if not categories_data:
+        await state.clear()
+        await message.answer('Для начала добавьте категорию',reply_markup=kb_generator([ADMIN_PANEL[1],ADMIN_PANEL[4]]))
+    else:
+        await message.answer(text='2/6 Выберите категорию продукта:', reply_markup=kb_generator(list(cats.keys())))
+        await state.update_data(name=message.text.capitalize())
+        await state.set_state(state=FSMProduct.category)
 
 
 @router.message(F.text, FSMProduct.category)
 async def fsm_category(message: Message, state: FSMContext):
-    if list(cats.keys()).count(f"{message.text}"):
-        await state.update_data(category=cats[f"{message.text}"])
-        await message.answer(text='3/6 Введите описание товара:', reply_markup=kb_generator([ADMIN_PANEL[3]]))
+   if list(cats.keys()).count(f"{message.text}"):
+       await state.update_data(category=cats[f"{message.text}"])
+       await message.answer(text='3/6 Введите описание товара:', reply_markup=kb_generator([ADMIN_PANEL[4]]))
 
-        await state.set_state(state=FSMProduct.description)
-    else:
+       await state.set_state(state=FSMProduct.description)
+   else:
         await message.answer('Нажмите на кнопку!')
 
 
 @router.message(FSMProduct.description)
 async def fsm_description(message: Message, state: FSMContext):
-    await message.answer(text='4/6 Введите стоимость товара (руб.)', reply_markup=kb_generator([ADMIN_PANEL[3]]))
+    await message.answer(text='4/6 Введите стоимость товара (руб.)', reply_markup=kb_generator([ADMIN_PANEL[4]]))
     await state.update_data(description=message.text.capitalize())
     await state.set_state(state=FSMProduct.price)
 
 
 @router.message(F.text.isdigit(), FSMProduct.price)
 async def fsm_price(message: Message, state: FSMContext):
-    await message.answer(text='5/6 Введите число товаров в наличии:', reply_markup=kb_generator([ADMIN_PANEL[3]]))
+    await message.answer(text='5/6 Введите число товаров в наличии:', reply_markup=kb_generator([ADMIN_PANEL[4]]))
     await state.update_data(price=int(message.text))
     await state.set_state(state=FSMProduct.quantity)
 
 
 @router.message(F.text.isdigit(), FSMProduct.quantity)
 async def fsm_quantity(message: Message, state: FSMContext):
-    await message.answer(text='6/6 Почти готово.Отправьте фото товара:', reply_markup=kb_generator([ADMIN_PANEL[3]]))
+    await message.answer(text='6/6 Почти готово.Отправьте фото товара:', reply_markup=kb_generator([ADMIN_PANEL[4]]))
     await state.update_data(quantity=int(message.text))
     await state.set_state(state=FSMProduct.photo)
 
@@ -119,9 +141,9 @@ async def fsm_photo(message: Message, state: FSMContext):
         data['quantity'],
         data['photo']))
 
-    await message.answer(text='Товар успешно добавлен!',reply_markup=ReplyKeyboardRemove())  # Сообщаем об успешной операции
+    await message.answer(text='Товар успешно добавлен!',
+                         reply_markup=ReplyKeyboardRemove())  # Сообщаем об успешной операции
     await state.clear()
-
 
 
 @router.message(F.text == ADMIN_PANEL[1], IsAdmin(admin_ids))

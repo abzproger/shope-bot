@@ -31,8 +31,10 @@ async def location (message:Message):
 @router.message(F.text == LEXICON['start_buy'])
 async def start_buy(message:Message):
     cats = {category[1]: category[0] for category in db.select_data('Categories') }
-    await message.answer(text='Выберите категорию:',reply_markup=kb_generator(list(cats.keys())))
-
+    if cats:
+        await message.answer(text=LEXICON['select_cats'],reply_markup=kb_generator(list(cats.keys())))
+    else:
+        await message.answer(LEXICON['empty'])
 
 @router.message(F.text)
 async def select_cats(message:Message):
