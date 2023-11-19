@@ -2,13 +2,12 @@ from aiogram import Router
 from aiogram import F
 from aiogram.filters import Command, CommandStart,Filter
 from aiogram.types import Message
-
-
 from keyboard.keyboard import kb_generator, ikb_generator
 from aiogram.types import CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
 from dataclasses import dataclass
-from lexicon.lexicon_RU import LEXICON
+from lexicon.lexicon_RU import LEXICON,LEXICON_ADMIN
+from database.database import db
 
 
 
@@ -29,3 +28,16 @@ async def location (message:Message):
     await message.answer_location(latitude=42.73303393290414,longitude= 47.134653774337586)
 
 
+@router.message(F.text == LEXICON['start_buy'])
+async def start_buy(message:Message):
+    cats = {category[1]: category[0] for category in db.select_data('Categories') }
+    await message.answer(text='Выберите категорию:',reply_markup=kb_generator(list(cats.keys())))
+
+
+@router.message(F.text)
+async def select_cats(message:Message):
+    cats = {category[1]: category[0] for category in db.select_data('Categories') }
+    if list(cats.keys()).count(f"{message.text}"):
+        product_data = [i for i in db.select_data(table_name="Products",condition=f"CategoryID = {cats[message.text]}")[0]]
+        await message.answer_photo(photo=product_data[-1],caption=f"<b>{product_data[1]}</b>\nКатегория:  {message.text}\nХарактерстики:  {product_data[3]}\nСтоимость:  {product_data[4]}")
+        #Доработать

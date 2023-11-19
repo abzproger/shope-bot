@@ -3,7 +3,7 @@ import logging
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import Bot, Dispatcher
 from config_data.config import Config, load_config
-from handlers import admin_handlers,user_handlers
+from handlers import admin_handlers,user_handlers,other_handlers
 # Инициализируем логгер
 logger = logging.getLogger(__name__)
 
@@ -22,6 +22,7 @@ async def main():
     dp: Dispatcher = Dispatcher(storage=storage)
     dp.include_router(admin_handlers.router)
     dp.include_router(user_handlers.router)
+    dp.include_router(other_handlers.router)
 
 
 
