@@ -9,7 +9,7 @@ def kb_generator(buttons: list):
     # Инициализируем билдер
     builder: ReplyKeyboardBuilder = ReplyKeyboardBuilder()
 
-    builder.row(*keyboard, width=1)
+    builder.row(*keyboard, width=3)
 
     # Создаем объект клавиатуры, добавляя в него кнопки
     return builder.as_markup(resize_keyboard=True,one_time_keyboard=True)
