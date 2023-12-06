@@ -5,10 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a076a145-8da6-4f41-a5a4-18ea4d9cabbf" name="Changes" comment="Добавление категорий">
-      <change beforePath="$PROJECT_DIR$/handlers/admin_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/admin_handlers1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers/user_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/user_handlers1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/keyboard/keyboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/keyboard/keyboard.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lexicon/lexicon_RU.py" beforeDir="false" afterPath="$PROJECT_DIR$/lexicon/lexicon_RU.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/admin_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/admin_handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/database.db" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +41,9 @@
       </UrlAndAccount>
     </option>
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 7
@@ -52,6 +57,7 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/workstation/PycharmProjects/Calc&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
 }</component>

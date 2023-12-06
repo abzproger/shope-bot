@@ -19,14 +19,14 @@ class DataBase:
         self.cur.execute(query, data)
         self.con.commit()
 
-    def select_data(self, table_name, condition=None):  # Достаем из таблицы
-        query = f"SELECT * FROM {table_name}"
+    def select_data(self,table_name,condition=None,data='*'):
+        query = f"SELECT {data} FROM {table_name}"
         if condition:
             query += f" WHERE {condition}"
         self.cur.execute(query)
         rows = self.cur.fetchall()
-
         return rows
+
 
     def update_data(self, table_name, data, condition):  # Обновляем столбец
         set_values = ', '.join([f"{column} = ?" for column in data.keys()])
